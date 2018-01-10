@@ -1,0 +1,87 @@
+---
+title: "HW 2B, Principles of Statistical Graphs - Nikhil Kotecha"
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Background
+
+Goal is to get as close to this economist graph as possible (maybe even improve on it)! Here's a link with the orignial: http://www.economist.com/node/21541178
+
+I relied on a harvard tutorial to help me get up to speed with ggplot2:http://tutorials.iq.harvard.edu/R/Rgraphics/Rgraphics.html#orgbe01a81
+
+(I have working knowledge of R from working with data for neural nets but mainly I use python). 
+
+Data comes from the linked tutorial with information on country name, Human Development Index, Corruption Perceptions Index, and associated region.  
+
+I slowly added information, and found that the most interesting use of space was to show HDI by CPI clustered by region. I initially tried to show all the regions in one graph, but it was too messy. Instead I graphed three regions separately (to stay in the 4 graph limit.) The hypotehtical audience for the plot's are a lay audience interested in new from around the world. My goals in making the graph were to learn how to replicate an economist-esque graph. I was particularly interested in trying a graphic in the vein of a mass media outlet after going through the "Visual Revelations: Improving Data" article in this week's reading. I have tried academic graphics before, but never through R and wanted to bolster my skills here too. In each graph the comparisions are similar: I wanted to show regional differences in perceived corruption and the development of the nation. Initially it was to compare across all regions (the first graph), but later graphs I think more effective because they compare within region. 
+
+Code Below:
+
+```{r}
+library(ggplot2)
+library(ggrepel)
+
+EconomistData <- read.csv(file="~/Desktop/EconomistData.csv",head=TRUE,sep=",")
+
+p1 <- ggplot(EconomistData, aes(x = CPI, y = HDI, color=Region)) + geom_point()
+
+p2 <- p1 + geom_smooth(method = loess, fill =NA)
+
+p3 <- p2 + labs(x = "Corruption Perceptions Index, 2011 (10=least corrupt)", y ="Human Development Index, 2011 (1=best)", title ="Corruption and Human Development", subtitle = "All Regions")
+
+p4 <- p3 + geom_text(aes(label=Country), size = 3)
+
+#p5 <-p4 + facet_wrap(~Region, ncol = 10)
+#p5 was super hard to read, so broke into separate graphs
+
+Asia_Pacific <-
+  ggplot(subset(EconomistData, Region %in% c("Asia Pacific")),
+  aes(x = CPI,
+  y = HDI,
+  label=Region)) +
+  geom_point(color="brown") +
+  geom_smooth(method = loess, fill = NA, color="brown") +
+  labs(x = "Corruption Perceptions Index, 2011 (10=least corrupt)", y =
+  "Human Development Index, 2011 (1=best)", title = "Corruption and Human Development", subtitle = "Asia Pacific")+
+  geom_text_repel(aes(label=Country), size = 3)
+
+Americas <- ggplot(subset(EconomistData, Region %in% c("Americas")),
+       aes(x=CPI,
+           y=HDI,
+           label=Region))+
+  geom_point(color="blue")+
+  geom_smooth(method = loess, fill =NA, color="blue")+
+  labs(x = "Corruption Perceptions Index, 2011 (10=least corrupt)", y ="Human Development Index, 2011 (1=best)", title ="Corruption and Human Development", subtitle = "Americas")+ 
+  geom_text_repel(aes(label=Country), size = 3)
+  
+SSA <- ggplot(subset(EconomistData, Region %in% c("SSA")),
+       aes(x=CPI,
+           y=HDI,
+           label=Region))+
+  geom_point(color="pink")+
+  geom_smooth(method = loess, fill =NA, color="pink")+
+  labs(x = "Corruption Perceptions Index, 2011 (10=least corrupt)", y ="Human Development Index, 2011 (1=best)", title ="Corruption and Human Development", subtitle = "Sub-Saharan Africa")+ 
+  geom_text_repel(aes(label=Country), size = 3)
+
+```
+
+## Plots
+
+```{r pressure, echo=FALSE}
+
+p4
+
+Asia_Pacific
+
+Americas
+
+SSA
+
+```
