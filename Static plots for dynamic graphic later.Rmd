@@ -1,6 +1,6 @@
 ---
-title: "Hw 8a/8b"
-authors: "Tin Oreskovic and Nikhil Kotecha"
+title: "Static Plots for Dynamic Graphics"
+authors: "Nikhil Kotecha"
 date: "Static: 10/24/2017, Dynamic: 10/29/2017 "
 output:
   html_document: default
